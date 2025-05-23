@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeScript Project</title>
+    <style>
+        body { margin: 0; display: flex; font-family: sans-serif; }
+        #gameCanvas { border: 1px solid black; cursor: default; }
+        #sidebar { padding: 10px; border-left: 1px solid #ccc; background-color: #f0f0f0; width: 200px; }
+        #sidebar h3 { margin-top: 0; }
+        #sidebar button { display: block; width: 100%; padding: 8px; margin-bottom: 8px; background-color: #ddd; border: 1px solid #bbb; border-radius: 4px; cursor: pointer; }
+        #sidebar button.selected { background-color: #007bff; color: white; border-color: #0056b3; }
+        #sidebar .direction-controls { margin-top: 5px; margin-bottom: 10px; }
+        #sidebar .direction-controls label { margin-right: 5px; }
+        #sidebar .direction-controls select { width: 100%; padding: 5px; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+        <canvas id="gameCanvas"></canvas>
+    </div>
+    <div id="sidebar">
+        <h3>Place Entity</h3>
+        <button id="select-conveyor" data-entity="CONVEYOR_BELT">Conveyor Belt</button>
+        <div id="conveyor-direction-controls" class="direction-controls" style="display: none;">
+            <label for="conveyor-direction">Direction:</label>
+            <select id="conveyor-direction">
+                <option value="RIGHT" selected>Right</option>
+                <option value="DOWN">Down</option>
+                <option value="LEFT">Left</option>
+                <option value="UP">Up</option>
+            </select>
+        </div>
+
+        <button id="select-inserter" data-entity="INSERTER">Inserter</button>
+        <div id="inserter-direction-controls" class="direction-controls" style="display: none;">
+            <label for="inserter-direction">Facing (Dropoff):</label>
+            <select id="inserter-direction">
+                <option value="RIGHT" selected>Right (Picks Left)</option>
+                <option value="DOWN">Down (Picks Up)</option>
+                <option value="LEFT">Left (Picks Right)</option>
+                <option value="UP">Up (Picks Down)</option>
+            </select>
+        </div>
+
+        <button id="select-assembler" data-entity="ASSEMBLER">Assembler</button>
+        <button id="select-mining-drill" data-entity="MINING_DRILL">Mining Drill</button>
+        <hr>
+        <button id="select-none" data-entity="NONE">Clear Selection</button>
+    </div>
+    <script src="dist/index.js"></script>
+</body>
+</html>
