@@ -1,9 +1,9 @@
-import { World } from './world';
-import { Tile, TileType } from './tiletypes';
-import { ConveyorBelt, Direction as ConveyorDirection, Item as ConveyorItem } from './conveyor';
-import { Inserter, InserterDirection } from './inserter';
-import { Assembler } from './assembler';
-import { MiningDrill } from './miningdrill'; // Added MiningDrill
+import { World } from './world.js';
+import { Tile, TileType } from './tiletypes.js';
+import { ConveyorBelt, Direction as ConveyorDirection, Item as ConveyorItem } from './conveyor.js';
+import { Inserter, InserterDirection } from './inserter.js';
+import { Assembler } from './assembler.js';
+import { MiningDrill } from './miningdrill.js'; // Added MiningDrill
 
 export class Renderer {
     private world: World;
@@ -146,7 +146,7 @@ export class Renderer {
                         case ConveyorDirection.RIGHT: itemX = cX + this.tileSize * progress; break;
                     }
                 }
-                
+
                 this.context.fillStyle = this.getItemColor(item.name);
                 this.context.beginPath();
                 this.context.arc(itemX, itemY, itemRadius, 0, Math.PI * 2);
@@ -201,8 +201,8 @@ export class Renderer {
             const handOffsetX = Math.cos(angle) * (armLength * 0.8);
             const handOffsetY = Math.sin(angle) * (armLength * 0.8);
             this.context.arc(
-                cX + this.tileSize / 2 + handOffsetX, 
-                cY + this.tileSize / 2 + handOffsetY, 
+                cX + this.tileSize / 2 + handOffsetX,
+                cY + this.tileSize / 2 + handOffsetY,
                 this.tileSize / 5, 0, Math.PI * 2);
             this.context.fill();
         }
@@ -223,16 +223,16 @@ export class Renderer {
             if (assembler.outputBuffer) {
                 this.context.fillStyle = this.getItemColor(assembler.outputBuffer.name);
                 this.context.beginPath();
-                this.context.arc(cX + this.tileSize/2, cY + this.tileSize/2, this.tileSize/4, 0, Math.PI*2);
+                this.context.arc(cX + this.tileSize / 2, cY + this.tileSize / 2, this.tileSize / 4, 0, Math.PI * 2);
                 this.context.fill();
                 this.context.strokeStyle = "white";
                 this.context.stroke();
             }
         } else {
             this.context.fillStyle = 'red';
-            this.context.font = `${this.tileSize*0.5}px Arial`;
+            this.context.font = `${this.tileSize * 0.5}px Arial`;
             this.context.textAlign = 'center';
-            this.context.fillText('?', cX + this.tileSize/2, cY + this.tileSize/1.5);
+            this.context.fillText('?', cX + this.tileSize / 2, cY + this.tileSize / 1.5);
         }
     }
 
@@ -264,7 +264,7 @@ export class Renderer {
             this.context.arc(cX + this.tileSize / 2, cY + this.tileSize / 2, this.tileSize * 0.15, 0, Math.PI * 2);
             this.context.fill();
         }
-        
+
         // Show output item if ready
         if (drill.outputBuffer) {
             this.context.fillStyle = this.getItemColor(drill.outputBuffer.name);
@@ -296,67 +296,72 @@ export class Renderer {
         this.context.globalAlpha = 0.5; // Semi-transparent for ghost
 
         let isValidPlacement = true; // Assume valid by default
-        let ghostTile: Partial<Tile & ConveyorBelt & Inserter & Assembler & MiningDrill> = { type: entityType };
 
         switch (entityType) {
-            case TileType.CONVEYOR_BELT:
-                ghostTile = { ...ghostTile, direction: conveyorDirection || ConveyorDirection.RIGHT, items: [], maxItems:1 };
-                this.context.fillStyle = this.getBaseColorForTile(ghostTile as Tile);
+            case TileType.CONVEYOR_BELT: {
+                const ghostTile: ConveyorBelt = { type: entityType, direction: conveyorDirection || ConveyorDirection.RIGHT, items: [], maxItems: 1, walkable: true, speed: 2 };
+                this.context.fillStyle = this.getBaseColorForTile(ghostTile);
                 this.context.fillRect(cX, cY, this.tileSize, this.tileSize);
-                this.drawConveyorBelt(cX, cY, ghostTile as ConveyorBelt);
+                this.drawConveyorBelt(cX, cY, ghostTile);
                 break;
+            }
             case TileType.INSERTER:
                 // For Inserter ghost, we need its own future coords for arm rendering if it depends on them
                 // The createInserter function sets pickup/dropoff based on its own (tileX, tileY) and direction
                 // So, we can construct a temporary inserter object for rendering.
-                const tempInserter = { // Partial<Inserter>
+                const tempInserter: Inserter = { // Partial<Inserter>
                     type: TileType.INSERTER,
-                    direction: inserterDirection || InserterDirection.RIGHT,
-                    pickupTarget: {x:0,y:0}, // Will be recalculated by drawInserter logic if needed or use dummy
-                    dropoffTarget: {x:0,y:0},
+                    direction: inserterDirection ?? InserterDirection.RIGHT,
+                    pickupTarget: { x: 0, y: 0 }, // Will be recalculated by drawInserter logic if needed or use dummy
+                    dropoffTarget: { x: 0, y: 0 },
                     currentItem: null,
                     x: tileX, // Pass current mouse tile coords
-                    y: tileY
+                    y: tileY,
+                    walkable: false,
+                    cooldown: 2,
+                    maxCooldown: 3
                 };
-                 // Adjust pickup/dropoff for visualization if drawInserter uses them relative to inserter's own x/y
+                // Adjust pickup/dropoff for visualization if drawInserter uses them relative to inserter's own x/y
                 switch (tempInserter.direction) {
-                    case InserterDirection.UP:    tempInserter.dropoffTarget = {x: tileX, y: tileY - 1}; break;
-                    case InserterDirection.DOWN:  tempInserter.dropoffTarget = {x: tileX, y: tileY + 1}; break;
-                    case InserterDirection.LEFT:  tempInserter.dropoffTarget = {x: tileX - 1, y: tileY}; break;
-                    case InserterDirection.RIGHT: tempInserter.dropoffTarget = {x: tileX + 1, y: tileY}; break;
+                    case InserterDirection.UP: tempInserter.dropoffTarget = { x: tileX, y: tileY - 1 }; break;
+                    case InserterDirection.DOWN: tempInserter.dropoffTarget = { x: tileX, y: tileY + 1 }; break;
+                    case InserterDirection.LEFT: tempInserter.dropoffTarget = { x: tileX - 1, y: tileY }; break;
+                    case InserterDirection.RIGHT: tempInserter.dropoffTarget = { x: tileX + 1, y: tileY }; break;
                 }
 
-                this.context.fillStyle = this.getBaseColorForTile(tempInserter as Tile);
+                this.context.fillStyle = this.getBaseColorForTile(tempInserter);
                 this.context.fillRect(cX, cY, this.tileSize, this.tileSize);
-                this.drawInserter(cX, cY, tempInserter as Inserter);
+                this.drawInserter(cX, cY, tempInserter);
                 break;
-            case TileType.ASSEMBLER:
-                ghostTile = { ...ghostTile, currentRecipe: null, craftingProgress: 0, inputBuffer: new Map(), outputBuffer: null};
-                this.context.fillStyle = this.getBaseColorForTile(ghostTile as Tile);
+            case TileType.ASSEMBLER: {
+                const ghostTile: Assembler = { type: entityType, currentRecipe: null, craftingProgress: 0, inputBuffer: new Map(), outputBuffer: null, walkable: false };
+                this.context.fillStyle = this.getBaseColorForTile(ghostTile);
                 this.context.fillRect(cX, cY, this.tileSize, this.tileSize);
-                this.drawAssembler(cX, cY, ghostTile as Assembler);
+                this.drawAssembler(cX, cY, ghostTile);
                 break;
-            case TileType.MINING_DRILL:
+            }
+            case TileType.MINING_DRILL: {
                 const targetTile = this.world.getTile(tileX, tileY);
                 isValidPlacement = !!(targetTile && targetTile.resource);
-                ghostTile = { ...ghostTile, isActive: isValidPlacement, resourceType: targetTile?.resource || null, miningProgress: 0, outputBuffer: null, miningSpeed: 100 };
-                
+                const ghostTile: MiningDrill = { type: entityType, isActive: isValidPlacement, resourceType: targetTile?.resource || null, miningProgress: 0, outputBuffer: null, miningSpeed: 100, walkable: false };
+
                 this.context.fillStyle = isValidPlacement ? this.getBaseColorForTile(ghostTile as Tile) : 'rgba(255,0,0,0.7)'; // Red if invalid
-                if(!isValidPlacement && this.getBaseColorForTile(ghostTile as Tile) === 'rgba(255,0,0,0.7)') { // if base color is also red make it more visible
-                     this.context.fillStyle = 'rgba(255,100,100,0.7)';
+                if (!isValidPlacement && this.getBaseColorForTile(ghostTile as Tile) === 'rgba(255,0,0,0.7)') { // if base color is also red make it more visible
+                    this.context.fillStyle = 'rgba(255,100,100,0.7)';
                 } else if (isValidPlacement) {
-                     this.context.fillStyle = this.getBaseColorForTile(ghostTile as Tile);
+                    this.context.fillStyle = this.getBaseColorForTile(ghostTile as Tile);
                 }
 
 
                 this.context.fillRect(cX, cY, this.tileSize, this.tileSize);
                 this.drawMiningDrill(cX, cY, ghostTile as MiningDrill);
                 break;
+            }
             default: // GRASS, WATER, STONE, IRON_ORE etc. are not placeable entities via this UI
                 this.context.globalAlpha = 1; // Reset alpha
                 return;
         }
-        
+
         // Draw border for ghost to indicate validity (optional, color already shows it)
         // this.context.strokeStyle = isValidPlacement ? 'rgba(0,255,0,0.8)' : 'rgba(255,0,0,0.8)';
         // this.context.strokeRect(cX, cY, this.tileSize, this.tileSize);

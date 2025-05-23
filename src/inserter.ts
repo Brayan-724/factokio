@@ -1,52 +1,8 @@
-import { Tile, TileType } from './tiletypes';
-import { Item, ConveyorBelt, addItemToBelt } from './conveyor'; // Assuming Item is also defined here
-import { World } from './world'; // To interact with the world
-
-// Inserters also have a direction, similar to conveyors
-export enum InserterDirection {
-    UP,    // Picks from South, Drops to North
-    DOWN,  // Picks from North, Drops to South
-    LEFT,  // Picks from East, Drops to West
-    RIGHT  // Picks from West, Drops to East
-}
-
-export interface Inserter extends Tile {
-    type: TileType.INSERTER;
-    direction: InserterDirection;
-    pickupTarget: { x: number, y: number }; // Coordinates it tries to pick from
-    dropoffTarget: { x: number, y: number }; // Coordinates it tries to drop to
-    currentItem: Item | null;
-    cooldown: number; // Time steps until next action
-    maxCooldown: number; // Cooldown period after an action
-}
-
-export function createInserter(x: number, y: number, direction: InserterDirection, maxCooldown: number = 60): Inserter {
-    let pX = x, pY = y, dX = x, dY = y;
-
-    switch (direction) {
-        case InserterDirection.UP:    pY = y + 1; dY = y - 1; break;
-        case InserterDirection.DOWN:  pY = y - 1; dY = y + 1; break;
-        case InserterDirection.LEFT:  pX = x + 1; dX = x - 1; break;
-        case InserterDirection.RIGHT: pX = x - 1; dX = x + 1; break;
-    }
-
-    return {
-        type: TileType.INSERTER,
-        walkable: false,
-        direction,
-        pickupTarget: { x: pX, y: pY },
-        dropoffTarget: { x: dX, y: dY },
-        currentItem: null,
-        cooldown: 0,
-        maxCooldown
-    };
-}
-
-import { Tile, TileType } from './tiletypes';
-import { Item, ConveyorBelt, addItemToBeltInput } from './conveyor';
-import { World } from './world';
-import { Assembler, tryAddItemToAssemblerInput, tryTakeItemFromAssemblerOutput } from './assembler';
-import { MiningDrill, tryTakeItemFromDrillOutput } from './miningdrill'; // Added MiningDrill
+import { Tile, TileType } from './tiletypes.js';
+import { Item, ConveyorBelt, addItemToBeltInput } from './conveyor.js';
+import { World } from './world.js';
+import { Assembler, tryAddItemToAssemblerInput, tryTakeItemFromAssemblerOutput } from './assembler.js';
+import { MiningDrill, tryTakeItemFromDrillOutput } from './miningdrill.js'; // Added MiningDrill
 
 // Inserters also have a direction, similar to conveyors
 export enum InserterDirection {

@@ -5,7 +5,8 @@ export enum TileType {
     IRON_ORE,
     CONVEYOR_BELT,
     INSERTER,
-    ASSEMBLER
+    ASSEMBLER,
+    MINING_DRILL
 }
 
 export interface Tile {

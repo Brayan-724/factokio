@@ -1,6 +1,6 @@
-import { Tile, TileType } from './tiletypes';
-import { Item } from './conveyor';
-import { World } from './world'; // For checking underlying resource tile
+import { Tile, TileType } from './tiletypes.js';
+import { Item } from './conveyor.js';
+import { World } from './world.js'; // For checking underlying resource tile
 
 export interface MiningDrill extends Tile {
     type: TileType.MINING_DRILL;

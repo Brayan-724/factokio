@@ -1,5 +1,5 @@
-import { Tile, TileType } from './tiletypes';
-import { Item } from './conveyor'; // Assuming Item is defined in conveyor.ts
+import { Tile, TileType } from './tiletypes.js';
+import { Item } from './conveyor.js'; // Assuming Item is defined in conveyor.ts
 
 // Define a recipe for crafting
 export interface Recipe {

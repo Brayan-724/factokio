@@ -1,4 +1,4 @@
-import { Tile, TileType } from './tiletypes';
+import { Tile, TileType } from './tiletypes.js';
 
 // Define the direction of the conveyor belt
 export enum Direction {
@@ -85,7 +85,7 @@ export function updateBelt(belt: ConveyorBelt, world: any /* World */, x: number
             } else if (nextTile.type === TileType.ASSEMBLER) {
                 // This is a direct transfer, usually an inserter would do this.
                 // For now, let's assume direct transfer if assembler is the next tile.
-                // import { tryAddItemToAssemblerInput } from './assembler'; // (needs to be available)
+                // import { tryAddItemToAssemblerInput } from './assembler.js'; // (needs to be available)
                 // if (world.tryAddItemToAssemblerInput(nextTile as Assembler, itemToMove!)) {
                 // successfullyMovedOffBelt = true;
                 // }

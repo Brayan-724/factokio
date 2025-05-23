@@ -1,16 +1,9 @@
-import { World } from './world';
-import { Renderer } from './renderer';
-import { TileType } from './tiletypes';
-import { Direction as ConveyorDirection } from './conveyor';
-import { InserterDirection } from './inserter';
-import { Recipe } from './assembler'; // Import Recipe type
-
-import { World } from './world';
-import { Renderer } from './renderer';
-import { Tile, TileType } from './tiletypes'; // TileType needed for selection
-import { Direction as ConveyorDirection } from './conveyor';
-import { InserterDirection } from './inserter';
-import { Recipe } from './assembler';
+import { World } from './world.js';
+import { Renderer } from './renderer.js';
+import { Tile, TileType } from './tiletypes.js'; // TileType needed for selection
+import { Direction as ConveyorDirection } from './conveyor.js';
+import { InserterDirection } from './inserter.js';
+import { Recipe } from './assembler.js';
 
 // --- Global state for player interaction ---
 let selectedEntityType: TileType | null = null;

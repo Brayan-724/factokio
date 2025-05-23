@@ -1,8 +1,8 @@
-import { Tile, TileType } from './tiletypes';
-import { ConveyorBelt, updateBelt, createConveyorBelt, Direction as ConveyorDirection, Item } from './conveyor';
-import { Inserter, updateInserter, createInserter, InserterDirection } from './inserter';
-import { Assembler, updateAssembler, createAssembler, setRecipe as setAssemblerRecipe, Recipe } from './assembler';
-import { MiningDrill, updateMiningDrill, createMiningDrill as createDrill, checkMiningDrillResource } from './miningdrill'; // Added
+import { Tile, TileType } from './tiletypes.js';
+import { ConveyorBelt, updateBelt, createConveyorBelt, Direction as ConveyorDirection, Item } from './conveyor.js';
+import { Inserter, updateInserter, createInserter, InserterDirection } from './inserter.js';
+import { Assembler, updateAssembler, createAssembler, setRecipe as setAssemblerRecipe, Recipe } from './assembler.js';
+import { MiningDrill, updateMiningDrill, createMiningDrill as createDrill, checkMiningDrillResource } from './miningdrill.js'; // Added
 
 export class World {
     private tiles: Tile[][];
@@ -14,8 +14,8 @@ export class World {
     constructor(width: number, height: number) {
         this.width = width;
         this.height = height;
-        this.tiles = this.initializeEmptyWorld();
-        // this.tiles = this.generateRandomWorld(); // Keep for later if needed
+        // this.tiles = this.initializeEmptyWorld();
+        this.tiles = this.generateRandomWorld(); // Keep for later if needed
     }
 
     private initializeEmptyWorld(): Tile[][] {
